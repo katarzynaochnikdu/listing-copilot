@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FashionHero Listing Copilot — opis i rozmiarówka w 30 sekund</title>
+<style>
+  :root{--ink:#1a1a2e;--green:#15803D;--cream:#FAF7F2;--accent:#DC2626;--muted:#6b7280;}
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif;}
+  body{background:var(--cream);color:var(--ink);line-height:1.55;}
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px;}
+  header{padding:14px 0;border-bottom:1px solid #e5e0d8;background:#fff;}
+  .logo{font-weight:800;letter-spacing:-.5px;}
+  .logo span{color:var(--green);}
+  .badge{font-size:11px;background:#FEF3C7;border:1px solid #EAB308;border-radius:99px;padding:2px 10px;margin-left:8px;vertical-align:middle;}
+  .hero{padding:54px 0 30px;text-align:center;}
+  .hero h1{font-size:clamp(28px,5vw,44px);letter-spacing:-1px;line-height:1.12;}
+  .hero p{margin:14px auto 0;max-width:560px;color:var(--muted);font-size:17px;}
+  .cta-row{margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .btn{border:none;border-radius:10px;padding:13px 26px;font-size:16px;font-weight:700;cursor:pointer;transition:.15s;}
+  .btn-primary{background:var(--green);color:#fff;}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(21,128,61,.25);}
+  .btn-ghost{background:#fff;border:2px solid var(--ink);color:var(--ink);}
+  .section{padding:44px 0;}
+  .section h2{font-size:26px;margin-bottom:6px;letter-spacing:-.5px;}
+  .section .sub{color:var(--muted);margin-bottom:22px;}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;}
+  .card{background:#fff;border:1px solid #e5e0d8;border-radius:14px;padding:18px;cursor:pointer;transition:.15s;}
+  .card:hover{border-color:var(--green);}
+  .card.active{border:2px solid var(--green);box-shadow:0 4px 14px rgba(21,128,61,.12);}
+  .card .ph{font-size:44px;text-align:center;padding:18px 0;background:var(--cream);border-radius:10px;}
+  .card h3{font-size:16px;margin-top:10px;}
+  .card p{font-size:13px;color:var(--muted);}
+  .panel{background:#fff;border:1px solid #e5e0d8;border-radius:14px;padding:22px;margin-top:18px;}
+  .dims{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0;}
+  .dims label{font-size:12px;color:var(--muted);display:block;}
+  .dims input{width:100%;padding:9px 10px;border:1px solid #d7d2c8;border-radius:8px;font-size:15px;}
+  .result{display:none;margin-top:18px;border-top:2px dashed #e5e0d8;padding-top:18px;}
+  .result h4{font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--green);margin:14px 0 6px;}
+  .result table{width:100%;border-collapse:collapse;font-size:14px;}
+  .result th,.result td{border:1px solid #e5e0d8;padding:7px 10px;text-align:center;}
+  .result th{background:var(--cream);}
+  .tags span{display:inline-block;background:#eef6ef;color:var(--green);border-radius:99px;padding:3px 12px;font-size:13px;margin:3px 4px 0 0;}
+  .spinner{display:none;margin:18px auto 0;text-align:center;color:var(--muted);font-weight:600;}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);animation:b 1s infinite alternate;margin:0 2px;}
+  .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+  @keyframes b{to{transform:translateY(-6px);opacity:.4}}
+  .pricing{background:var(--ink);color:#fff;border-radius:18px;padding:36px;text-align:center;}
+  .pricing .price{font-size:44px;font-weight:800;}
+  .pricing .price small{font-size:16px;font-weight:400;color:#cbd5e1;}
+  .pricing ul{list-style:none;margin:16px 0 22px;color:#e2e8f0;font-size:15px;}
+  .pricing li{margin:6px 0;}
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(26,26,46,.65);z-index:50;align-items:center;justify-content:center;padding:20px;}
+  .modal{background:#fff;color:var(--ink);border-radius:16px;max-width:430px;width:100%;padding:28px;text-align:center;position:relative;}
+  .modal h3{font-size:22px;margin-bottom:8px;}
+  .modal p{color:var(--muted);font-size:15px;margin-bottom:16px;}
+  .modal input{width:100%;padding:12px;border:1px solid #d7d2c8;border-radius:9px;font-size:15px;margin-bottom:10px;}
+  .modal .x{position:absolute;top:10px;right:14px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);}
+  .ok{display:none;color:var(--green);font-weight:700;margin-top:8px;}
+  footer{padding:26px 0;color:var(--muted);font-size:12.5px;text-align:center;}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;display:none;z-index:60;}
+</style>
+<!-- PostHog (region EU). KROK 1: wklej swój Project API Key zamiast phc_TWOJ_KLUCZ_TUTAJ (PostHog → Settings → Project → Project API Key). Klucz client-side jest publiczny — to OK. -->
+<script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_TWOJ_KLUCZ_TUTAJ', {api_host:'https://eu.i.posthog.com', defaults:'2026-01-30'})
+</script>
+</head>
+<body>
+<header><div class="wrap"><span class="logo">Fashion<span>Hero</span> Listing Copilot</span><span class="badge">BETA dla sellerów</span></div></header>
+
+<section class="hero wrap">
+  <h1>Odzyskaj swoje wieczory.<br>Opis i rozmiarówka w 30 sekund.</h1>
+  <p>Wgrywasz zdjęcie, podajesz wymiary — Copilot pisze butikowy opis po polsku, buduje tabelę rozmiarów i dodaje tagi, które sprzedają. Mniej zwrotów, więcej czasu.</p>
+  <div class="cta-row">
+    <button class="btn btn-primary" onclick="track('cta_demo');document.getElementById('demo').scrollIntoView({behavior:'smooth'})">Wypróbuj demo</button>
+    <button class="btn btn-ghost" onclick="openModal('cta_hero')">Kup za 79 zł/msc</button>
+  </div>
+</section>
+
+<section class="section wrap" id="demo">
+  <h2>Demo: wybierz produkt</h2>
+  <p class="sub">Trzy przykładowe produkty z prawdziwego asortymentu sellerów. Wybierz, uzupełnij wymiary, generuj.</p>
+  <div class="cards" id="cards"></div>
+  <div class="panel">
+    <strong id="selName">Wybierz produkt powyżej</strong>
+    <div class="dims" id="dims"></div>
+    <button class="btn btn-primary" id="genBtn" disabled onclick="generate()">⚡ Generuj opis i tabelę</button>
+    <div class="spinner" id="spin">Copilot pisze<span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div class="result" id="result">
+      <h4>Opis produktu</h4><p id="desc"></p>
+      <h4>Tabela rozmiarów (cm)</h4><div id="table"></div>
+      <h4>Tagi</h4><div class="tags" id="tags"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section wrap">
+  <div class="pricing">
+    <h2>Listing Copilot</h2>
+    <div class="price">79 zł<small> / miesiąc</small></div>
+    <ul>
+      <li>✓ Nielimitowane opisy i tabele rozmiarów</li>
+      <li>✓ Tagi i tytuły pod wyszukiwarkę FashionHero</li>
+      <li>✓ Średnio 2 wieczory tygodniowo z powrotem</li>
+    </ul>
+    <button class="btn btn-primary" onclick="openModal('cta_pricing')">Kup teraz</button>
+  </div>
+</section>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <button class="x" onclick="closeModal()">✕</button>
+    <h3>Startujemy wkrótce 🚀</h3>
+    <p>Kończymy testy z pierwszą grupą sellerów. Zostaw e-mail — dostaniesz dostęp w pierwszej kolejności i <strong>50% zniżki na 3 miesiące</strong>.</p>
+    <input type="email" id="email" placeholder="twoj@email.pl">
+    <button class="btn btn-primary" style="width:100%" onclick="submitEmail()">Zapisz mnie na listę</button>
+    <div class="ok" id="ok">✓ Zapisane! Odezwiemy się.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<footer>Prototyp walidacyjny FashionHero Labs · zdarzenia: PostHog (EU) + podgląd localStorage.fh_events · UI 100% PL</footer>
+
+<script>
+// ===== Tracking (stub pod PostHog — podmienić na posthog.capture w Q4.1) =====
+function track(ev, props={}){
+  // PostHog: wysyła nazwany event (buy_clicked, generate_clicked, email_submitted...) obok autocapture
+  try{ if(window.posthog && posthog.capture) posthog.capture(ev, props); }catch(e){}
+  // fallback lokalny (podgląd: localStorage.fh_events)
+  try{ const log = JSON.parse(localStorage.getItem('fh_events')||'[]'); log.push({ev, props, t:new Date().toISOString()}); localStorage.setItem('fh_events', JSON.stringify(log)); }catch(e){}
+  console.log('[fh_event]', ev, props);
+}
+track('$pageview',{page:'listing-copilot-landing'});
+
+// ===== Demo data =====
+const products = [
+  {id:'sukienka', icon:'👗', name:'Sukienka midi, len', sub:'kat. dresses · handmade', dims:[['Długość',98],['Biust',92],['Talia',74]],
+   desc:'Lniana sukienka midi, która pracuje na Ciebie cały sezon — przewiewna na upały, elegancka na kolację. Naturalny len o gęstym splocie układa się miękko i nie prześwituje, a odcinana talia podkreśla sylwetkę bez ściskania. Kieszenie? Oczywiście, że są. Uszyta w polskiej pracowni, w limitowanej serii.',
+   table:[['Rozmiar','Długość','Biust','Talia'],['S',96,88,70],['M',98,92,74],['L',100,96,78]],
+   tags:['#len','#midi','#boho','#naLato','#sukienkaNaWesele']},
+  {id:'bluza', icon:'🧥', name:'Bluza oversize, streetwear', sub:'kat. sportswear · vintage', dims:[['Długość',72],['Pierś',128],['Rękaw',60]],
+   desc:'Oversize, który wygląda jak z drop’u, a nie z second-handu. Gruba, szczotkowana bawełna 380 g trzyma fason i nie mechaci się po praniach. Spuszczone ramię i szeroki rękaw dają miejski luz — noś z bikerkami albo szerokimi jeansami. Stan vintage: bardzo dobry, bez przetarć.',
+   table:[['Rozmiar','Długość','Pierś','Rękaw'],['M',70,122,58],['L',72,128,60],['XL',74,134,62]],
+   tags:['#streetwear','#oversize','#vintage','#unisex','#y2k']},
+  {id:'torebka', icon:'👜', name:'Torebka skórzana, crossbody', sub:'kat. bags · rzemiosło', dims:[['Szerokość',24],['Wysokość',17],['Pasek',120]],
+   desc:'Skórzana crossbody w rozmiarze idealnym: mieści telefon, portfel i klucze, a nie wygląda jak bagaż podręczny. Naturalna skóra licowa pięknie się patynuje, mosiężne okucia nie tracą koloru. Regulowany pasek pozwala nosić ją też jako listonoszkę. Ręczne szycie, polska manufaktura.',
+   table:[['Wymiar','cm'],['Szerokość',24],['Wysokość',17],['Głębokość',7],['Pasek (max)',120]],
+   tags:['#skóraNaturalna','#crossbody','#handmade','#minimalizm','#naCoDzień']},
+];
+const cards = document.getElementById('cards');
+let sel = null;
+products.forEach((p,i)=>{
+  const d = document.createElement('div');
+  d.className='card'; d.innerHTML = `<div class="ph">${p.icon}</div><h3>${p.name}</h3><p>${p.sub}</p>`;
+  d.onclick = ()=>select(i,d);
+  cards.appendChild(d);
+});
+function select(i,el){
+  sel = products[i];
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('selName').textContent = sel.name + ' — uzupełnij wymiary:';
+  const dims = document.getElementById('dims');
+  dims.innerHTML = sel.dims.map(([n,v])=>`<div><label>${n} (cm)</label><input type="number" value="${v}"></div>`).join('');
+  document.getElementById('genBtn').disabled = false;
+  document.getElementById('result').style.display='none';
+  track('product_selected',{product:sel.id});
+}
+function generate(){
+  if(!sel) return;
+  track('generate_clicked',{product:sel.id});
+  document.getElementById('spin').style.display='block';
+  document.getElementById('result').style.display='none';
+  setTimeout(()=>{
+    document.getElementById('spin').style.display='none';
+    document.getElementById('desc').textContent = sel.desc;
+    document.getElementById('table').innerHTML = '<table>'+sel.table.map((r,ri)=>'<tr>'+r.map(c=>ri===0?`<th>${c}</th>`:`<td>${c}</td>`).join('')+'</tr>').join('')+'</table>';
+    document.getElementById('tags').innerHTML = sel.tags.map(t=>`<span>${t}</span>`).join('');
+    document.getElementById('result').style.display='block';
+    track('result_shown',{product:sel.id});
+  }, 2000);
+}
+// ===== Fake door =====
+function openModal(src){ track('buy_clicked',{source:src}); document.getElementById('modalBg').style.display='flex'; }
+function closeModal(){ document.getElementById('modalBg').style.display='none'; document.getElementById('ok').style.display='none'; }
+function submitEmail(){
+  const e = document.getElementById('email').value.trim();
+  if(!/.+@.+\..+/.test(e)){ toast('Podaj poprawny e-mail'); return; }
+  track('email_submitted',{email_domain:e.split('@')[1]});
+  document.getElementById('ok').style.display='block';
+  setTimeout(closeModal, 1600);
+}
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2200); }
+</script>
+</body>
+</html
